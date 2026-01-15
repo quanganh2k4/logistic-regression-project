@@ -1,0 +1,1806 @@
+---
+title: "Báo cáo cuối kỳ Xử lý số liệu thống kê"
+author: "Nhóm 15"
+date: "2024-12-18"
+output:
+  html_document:
+    toc: true
+    toc_depth: 5
+    toc_float: true
+    code_folding: hide
+    df_print: paged
+    theme: flatly
+    highlight: tango
+---
+
+# Thành viên nhóm:
+
+  1. Đậu Quang Anh - 22110014
+  
+  2. Lâm Gia Bảo - 22110023
+  
+  3. Trần Duy An - 22110008
+  
+  4. Lê Thị Hồng Đang - 22110033
+  
+  5. Trần Quốc Danh - 22110035
+
+# 1. Giới thiệu
+
+Bệnh tiểu đường hiện nay đang trở thành một trong những căn bệnh mãn tính phổ biến và nghiêm trọng nhất trên toàn cầu. Căn bệnh này xảy ra khi cơ thể không thể điều chỉnh hiệu quả mức độ glucose trong máu, dẫn đến những biến chứng nghiêm trọng như bệnh tim mạch, mất thị lực, cắt cụt chi dưới, và bệnh thận. Mặc dù hiện tại chưa có phương pháp chữa khỏi bệnh tiểu đường, nhưng các chiến lược can thiệp như giảm cân, duy trì chế độ ăn uống lành mạnh, tăng cường vận động thể chất và điều trị y tế có thể giúp làm giảm các tác động tiêu cực của bệnh, đặc biệt là khi chẩn đoán sớm và thay đổi lối sống có thể cải thiện hiệu quả điều trị.
+
+Dữ liệu `diabetes_012_health_indicators_BRFSS2015.csv` được thu thập từ khảo sát của 253,680 người dân Hoa Kỳ vào năm 2015, cung cấp một tập hợp các chỉ số sức khỏe và các yếu tố nguy cơ liên quan đến bệnh tiểu đường. 
+
+Dữ liệu này bao gồm 22 biến quan sát, bao gồm các biến sau:
+
+- `Diabetes_012`: Tình trạng bệnh tiểu đường (0: không tiểu đường, 1: tiền tiểu đường, 2: tiểu đường).
+
+- `HighBP`: Tình trạng cao huyết áp (0, 1).    
+    
+  - 0: Không cao huyết áp.
+    
+  - 1: Cao huyết áp.
+
+- `HighChol`: Tình trạng cholesterol cao (0, 1).
+
+  - 0: Không cholesterol cao.
+    
+  - 1: Cholesterol cao.
+    
+- `CholCheck`: Kiểm tra cholesterol trong vòng 5 năm qua (0, 1).          
+
+  - 0: Không.
+    
+  - 1: Có.
+
+- `BMI`: Chỉ số khối cơ thể (BMI).                  
+
+- `Smoker`: Người đã hút ít nhất 100 điếu thuốc trong suốt cuộc đời mình? (0, 1), [Lưu ý: 5 gói = 100 điều thuốc].
+
+  - 0: Không.
+    
+  - 1: Có.
+
+- `Age`: Tuổi của người tham gia khảo sát.
+
+- `Stroke`: Đã từng được chẩn đoán bị đột quỵ (0, 1).
+
+  - 0: Chưa từng bị đột quỵ.
+    
+  - 1: Đã từng bị đột quỵ.
+
+- `HeartDiseaseorAttack`: Đã từng được chẩn đoán mắc bệnh tim mạch vành (CHD) hoặc nhồi máu cơ tim (MI) (0, 1).
+
+  - 0: Chưa từng.
+    
+  - 1: Đã từng.
+
+- `PhysActivity`: Có hoạt động thể chất trong vòng 30 ngày, không tính hoạt động liên quan tới công việc? (0, 1).
+
+  - 0: Không.
+    
+  - 1: Có.
+
+- `Fruits`: Tiêu thụ trái cây ít nhất 1 lần mỗi ngày? (0, 1).               
+
+  - 0: Không.
+    
+  - 1: Có.
+
+- `Veggies`: Tiêu thụ rau ít nhất 1 lần mỗi ngày? (0, 1).
+
+  - 0: Không.
+    
+  - 1: Có.
+
+- `HvyAlcoholConsump`: Người uống rượu nặng (nam giới uống hơn 14 ly mỗi tuần và nữ giới uống hơn 7 ly mỗi tuần) (0, 1).       
+
+  - 0: Không.
+    
+  - 1: Có.
+
+- `AnyHealthcare`: Có bất kỳ hình thức bảo hiểm y tế nào, bao gồm bảo hiểm y tế, kế hoạch trả trước như HMOs hoặc các kế hoạch chính phủ như Medicare hoặc Dịch vụ Y tế Ấn Độ không? (0, 1).     
+
+  - 0: Không.
+    
+  - 1: Có.
+
+- `NoDocbcCost`: Trong 12 tháng qua, có cần gặp bác sĩ nhưng không thể vì chi phí không? (0, 1).   
+
+  - 0: Không.
+    
+  - 1: Có.
+
+- `GenHlth`: Bạn có thể đánh giá sức khoẻ chung của mình như thế nào? (1 ~ 5).             
+
+  - 1: Excellent (Cực kỳ tốt).
+    
+  - 2: Very good (Rất tốt).
+    
+  - 3: Good (Tốt).
+    
+  - 4: Fair (Trung bình).
+    
+  - 5: Poor (Kém).
+
+- `MentHlth`: Nghĩ về sức khỏe tinh thần của bạn, bao gồm căng thẳng, trầm cảm và các vấn đề về cảm xúc, trong 30 ngày qua, bạn đã có bao nhiêu ngày không cảm thấy khỏe về mặt tinh thần? (0 ~ 30). 
+
+  - 1 - 30: Số ngày.
+
+- `PhysHlth`: Nghĩ về sức khỏe thể chất của bạn, bao gồm bệnh tật và chấn thương, trong 30 ngày qua, bạn đã có bao nhiêu ngày không cảm thấy khỏe về mặt thể chất? (0 ~ 30).
+
+  - 1 - 30: Số ngày.
+
+- `DiffWalk`: Bạn có gặp khó khăn nghiêm trọng khi đi bộ hoặc leo cầu thang không? (0, 1).      
+
+    - 0: Không.
+    
+    - 1: Có.
+
+- `Sex`: Giới tính (0: Nữ, 1: Nam).                  
+
+- `Age`: Nhóm tuổi (1 ~ 13).                 
+
+  - 1: 18-24 tuổi.
+  
+  - 2: 25-29 tuổi.
+  
+  - 3: 30-34 tuổi.
+  
+  - 4: 35-39 tuổi.
+  
+  - 5: 40-44 tuổi.
+  
+  - 6: 45-49 tuổi.
+  
+  - 7: 50-54 tuổi.
+  
+  - 8: 55-59 tuổi.
+  
+  - 9: 60-64 tuổi.
+  
+  - 10: 65-69 tuổi.
+  
+  - 11: 70-74 tuổi.
+  
+  - 12: 75-79 tuổi.
+  
+  - 13: 80 tuổi trở lên.
+  
+- `Education`: Trình độ học vấn đã hoàn thành (1 ~ 6). 
+
+  - 1: Never attended school or only kindergarten (Chưa học hoặc chỉ học mẫu giáo).
+  
+  - 2: Grades 1 through 8 (Bậc 1 đến 8) (Elementary).
+  
+  - 3: Grades 9 through 11 (Bậc 9 đến 11) (Some high school).
+  
+  - 4: Grade 12 or GED (Bậc 12 hoặc tương đương) (High school graduate or General Equivalency Diploma).
+  
+  - 5: College 1 year to 3 years (Đại học từ 1 đến 3 năm) (Some college or technical school).
+  
+  - 6: College 4 years or more (Đại học 4 năm trở lên) (College graduate).
+
+- `Income`: Mức thu nhập hộ gia đình hàng năm (Nếu người tham gia từ chối bất kỳ mức thu nhập nào, mã hóa là "Refused") (1 ~ 8).  
+
+  - 1: Dưới $10,000.
+  
+  - 2: Dưới $15,000.
+  
+  - 3: Dưới $20,000.
+  
+  - 4: Dưới $25,000.
+  
+  - 5: Dưới $35,000.
+  
+  - 6: Dưới $50,000.
+  
+  - 7: Dưới $75,000.
+  
+  - 8: $75,000 hoặc hơn.
+
+Báo cáo này sẽ phân tích các yếu tố sức khỏe có liên quan đến bệnh tiểu đường và đánh giá sự tương quan giữa các yếu tố này để xác định những yếu tố nguy cơ cao, từ đó hỗ trợ việc phát triển các mô hình dự đoán hiệu quả cho bệnh tiểu đường.
+
+# 2. Các thư viện cần thiết
+```{r Thư viện}
+library(tidyverse)
+library(ISLR2)
+library(janitor)
+library(boot)
+library(lmPerm)
+library(ipred)
+library(corrplot)
+library(leaps)
+library(car)
+library(broom)
+library(pROC)
+library(scales)
+library(themis)
+library(ROSE)
+library(nnet)
+library(speedglm)
+library(mgcv)
+library(mgcViz)
+setwd("D:/XLSLTK/Project_CK")
+```
+
+# 3. Đọc dữ liệu
+
+## 3.1 Đọc dữ liệu bằng hàm `read_csv()`
+
+```{r Đọc dữ liệu}
+df = read_csv("./data/diabetes_012_health_indicators_BRFSS2015.csv")
+```
+
+## 3.2 Kiểm tra các cột của dữ liệu
+
+```{r}
+colnames(df)
+```
+
+## 3.3 Đọc dữ liệu
+
+```{r}
+glimpse(df)
+```
+
+# 4. Tiền xử lý dữ liệu
+
+## 4.1 Kiểm soát tên và dạng dữ liệu
+
+Sử dụng hàm `clean_names()` để xử lý tên của biến chưa đúng quy tắc.
+
+```{r}
+df = df |> clean_names()
+```
+
+Sử dụng `glimpse()` để kiểm tra lại dữ liệu sau khi đã xử lý tên biến.
+
+```{r}
+glimpse(df)
+```
+
+Các dạng dữ liệu của các cột đã đúng định dạng.
+
+## 4.2 Kiểm tra `NA`
+
+Kiểm tra xem dữ liệu có chứa các giá trị `NA` hay không. 
+
+Nếu có thì thực hiểm kiểm tra xem dữ liệu bị khuyết bao nhiêu %.
+
+Để thực hiện tính số lượng giá trị `NA` của các cột trong dữ liệu ta sử dụng hàm `colSums()` kết hợp với hàm `is.na()`.
+
+```{r}
+colSums(is.na(df))
+```
+
+Như vậy thì các cột của dữ liệu không chứa các giá trị `NA`. 
+
+Vậy thì ta không cần kiểm tra tỷ lệ bị khuyết của dữ liệu.
+
+## 4.3 Kiểm tra giá trị trùng lặp
+
+```{r}
+df |> duplicated() |> sum()
+```
+
+Như vậy thì dữ liệu trên có tới 23899 giá trị trùng lặp. Ta cần loại bỏ các giá trị trùng lặp trên trước khi thực hiện phân tích.
+
+Để loại bỏ các giá trị trùng lặp ta sử dụng hàm `distinct()`.
+
+```{r}
+df = df |> distinct()
+```
+
+## 4.4 Chuyển đổi dữ liệu
+
+```{r}
+glimpse(df)
+```
+Ta có thể quan sát thấy rằng biến `diabetes_012` có 3 loại là `0`, `1` và `2` tương ứng cho `Không tiểu đường`, `Tiền tiểu đường` và `Tiểu đường`. Với mục tiêu phân loại, ta sẽ chuyển các giá trị `0`, `1` và `2` đó sang dạng nhân tố (factor).
+
+```{r}
+df_clean = df
+df_clean = df_clean |> mutate(diabetes_012 = factor(diabetes_012, levels = c(0, 1, 2), labels = c("No diabetes", "Pre-diabetes", "Diabetes")))
+```
+
+Ngoài ra trong số 22 biến trên thì chỉ có các biến như `bmi`, `ment_hlth` và `phys_hlth` là dạng số. Các biến còn lại đều là các biến chứa các giá trị để phân loại. Ta sẽ chuyển các biến này sang dạng factor.
+
+```{r}
+df_clean = df_clean |> mutate(across(!c(bmi, ment_hlth, phys_hlth), as.factor))
+```
+
+Chuyển đổi các biến nhân tố trên sang dạng dễ đọc hơn.
+
+```{r}
+df_clean = df_clean |>
+  mutate(high_bp = factor(high_bp, 
+                          levels = c(0, 1), 
+                          labels = c("No High Blood", 
+                                     "High Blood")),
+         high_chol = factor(high_chol, 
+                            levels = c(0, 1), 
+                            labels = c("No High Cholesterol",
+                                       "High Cholesterol")),
+         smoker = factor(smoker, levels = c(0, 1), 
+                         labels = c("No Smoker",
+                                    "Smoker")),
+         stroke = factor(stroke, levels = c(0, 1), 
+                         labels = c("No Stroke",
+                                    "Stroke")),
+         heart_diseaseor_attack = factor(heart_diseaseor_attack, levels = c(0, 1), 
+                                         labels = c("No",
+                                                    "Yes")),
+         phys_activity = factor(phys_activity, levels = c(0, 1), 
+                                labels = c("No", 
+                                           "Yes")),
+         # age = factor(age, levels = c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13),
+         #              labels = c("Age 18 - 24",
+         #                         "Age 25 - 29",
+         #                         "Age 30 - 34",
+         #                         "Age 35 - 39",
+         #                         "Age 40 - 44",
+         #                         "Age 45 - 49",
+         #                         "Age 50 - 54",
+         #                         "Age 55 - 59",
+         #                         "Age 60 - 64",
+         #                         "Age 65 - 69",
+         #                         "Age 70 - 74",
+         #                         "Age 75 - 79",
+         #                         "Age 80 or older"),
+         #              ordered = TRUE),
+         # education = factor(education, levels = c(1, 2, 3, 4, 5, 6),
+         #                 labels = c("Never attended school or only kindergarten",
+         #                         "Grades 1 - 8 (Elementary)",
+         #                         "Grades 9 - 11 (Some high school)",
+         #                         "Grade 12 or GED (High school graduate)",
+         #                         "College 1 year to 3 years (Some college or technical school)",
+         #                         "College 4 years or more (College graduate)"),
+         #              ordered = TRUE),
+         # income = factor(income, levels = c(1, 2, 3, 4, 5, 6, 7, 8),
+         #              labels = c("Less than $10,000",
+         #                         "$10,000 to $15,000",
+         #                         "$15,000 to $20,000",
+         #                         "$20,000 to $25,000",
+         #                         "$25,000 to $35,000",
+         #                         "$35,000 to $50,000",
+         #                         "$50,000 to $75,000",
+         #                         "$75,000 or more"),
+         #              ordered = TRUE),
+         chol_check = factor(chol_check,
+                             levels = c(0, 1),
+                             labels = c("No", "Yes")),
+         fruits = factor(fruits,
+                         levels = c(0, 1),
+                         labels = c("No", "Yes")),
+         veggies = factor(veggies,
+                          levels = c(0, 1),
+                          labels = c("No", "Yes")),
+         hvy_alcohol_consump = factor(hvy_alcohol_consump,
+                                     levels = c(0, 1),
+                                     labels = c("No", "Yes")),
+         any_healthcare = factor(any_healthcare,
+                                levels = c(0, 1),
+                                labels = c("No", "Yes")),
+         no_docbc_cost = factor(no_docbc_cost,
+                               levels = c(0, 1),
+                               labels = c("No", "Yes")),
+         sex = factor(sex,
+                      levels = c(0, 1),
+                      labels = c("Female", "Male")),
+         diff_walk = factor(diff_walk,
+                           levels = c(0, 1),
+                           labels = c("No", "Yes")),
+         gen_hlth = factor(gen_hlth,
+                           levels = c(1, 2, 3, 4, 5),
+                           labels = c("Excellent", "Very Good", "Good", "Fair", "Poor")))
+```
+
+## 4.5 Thống kê dữ liệu
+
+```{r}
+summary(df_clean)
+```
+
+# 5. Khám phá phân tích dữ liệu
+
+## 5.1 Phân bố của bệnh tiểu đường
+
+```{r}
+ggplot(df_clean, aes(x = diabetes_012, fill = diabetes_012)) + 
+  geom_bar(stat = "count", alpha = 0.9) + 
+  stat_count(geom = "text", size = 3.5, 
+             aes(label = percent(after_stat(count) / sum(after_stat(count)))),
+             vjust = -0.5, color = "black") +
+  labs(
+    title = "Distribution of Diabetes", 
+    x = "", 
+    y = "Count", 
+    fill = "Diabetes Status"
+  ) +
+  scale_fill_manual(
+    values = c("No diabetes" = "#1b9e77", 
+               "Pre-diabetes" = "#d95f02", 
+               "Diabetes" = "#7570b3")
+  ) +
+  theme_minimal() +
+  theme(legend.position = "top")
+
+```
+
+Biểu đồ trên cho ta thấy được:
+
+- Dữ liệu không được cân bằng khi chỉ có khoảng 2\% số người được hỏi là bị tiền tiểu đường và có khoảng 14\% số người được hỏi bị mắc bệnh tiểu đường, còn lại là khoảng 84\% số người được hỏi là không mắc bệnh.
+
+- Sự mất cân bằng này có thể ảnh hưởng tiêu cực đến hiệu quả của mô hình dự đoán. Nhóm tiền tiểu đường, với số lượng nhỏ, sẽ khó được mô hình học và dự đoán chính xác, dẫn đến việc giảm độ chính xác trong phân loại và dự đoán.
+
+- Để giải quyết vấn đề này, chúng ta có thể sử dụng kỹ thuật resampling như oversampling hoặc undersampling để cân bằng dữ liệu. Hoặc có thể điều chỉnh trọng số cho mô hình học máy để tăng độ quan trọng của nhóm thiểu số. Ngoài ra, ta cũng có thể sử dụng các phương pháp khác.
+
+## 5.2 High_BP và Diabetes
+
+```{r}
+ggplot(df_clean, aes(x = high_bp, 
+               fill = high_bp)) + 
+  geom_bar(stat = "count", alpha = 0.8) + 
+  geom_text(stat = "count", size = 3.5, aes(label = paste("n = ", after_stat(count))), vjust = -0.6, color = "black") +
+  facet_wrap(~diabetes_012) +
+  labs(title = "High Blood and Diabetes", x = "Blood Pressure", y = "Count", fill = "Blood Pressure") +
+  theme_minimal() +
+  ylim(0, 140000) +
+  scale_fill_manual(
+    values = c("No High Blood" = "#66c2a5", 
+               "High Blood" = "#fc8d62")) +
+  theme(legend.position = "right")
+```
+
+```{r}
+df_clean |> tabyl(diabetes_012, high_bp) |> adorn_percentages("row") |> adorn_pct_formatting(digits = 2)
+```
+
+Qua biểu đồ và bảng tỷ số trên ta thấy được rằng: 
+
+- Biểu đồ cho thấy nhóm người bị tiền tiểu đường và tiểu đường có tỷ lệ bị cao huyết áp cao hơn đáng kể so với nhóm không bị tiểu đường. Điều này gợi ý một mối liên hệ tiềm năng giữa tình trạng tiểu đường và nguy cơ cao huyết áp.
+
+- Ở nhóm không bị tiểu đường, tỷ lệ người bị cao huyết áp thấp hơn đáng kể so với các nhóm bị tiền tiểu đường và tiểu đường, cho thấy nguy cơ cao huyết áp tăng lên khi mức độ nghiêm trọng của tiểu đường gia tăng.
+
+- Đáng chú ý, trong nhóm bị tiền tiểu đường và tiểu đường, tỷ lệ người bị cao huyết áp chiếm trên 60%, cho thấy tình trạng cao huyết áp rất phổ biến ở các nhóm này.
+
+## 5.3 High Cholesterol và Diabetes
+
+```{r}
+ggplot(df_clean, aes(x = high_chol, 
+               fill = high_chol)) + 
+  geom_bar(stat = "count", alpha = 0.8) + 
+  geom_text(stat = "count", size = 3.5, aes(label = paste("n = ", after_stat(count))), vjust = -0.5, color = "black") +
+  facet_wrap(~ diabetes_012) +
+  labs(title = "High Cholesterol and Diabetes", x = "High Cholesterol", y = "Count", fill = "High Cholesterol") +
+  theme_minimal() +
+  ylim(0, 140000) +
+  scale_fill_manual(values = c("No High Cholesterol" = "#66c2a5", 
+                               "High Cholesterol" = "#fc8d62")) +
+  theme(legend.position = "top") + 
+  scale_x_discrete(labels = NULL)
+```
+
+```{r}
+df_clean |> tabyl(diabetes_012, high_chol) |> adorn_percentages("row") |> adorn_pct_formatting(digits = 2)
+```
+
+Dựa vào biểu đồ và bảng tỷ số trên ta có được một số nhận xét sau:
+
+- Tỷ lệ người bị **cholesterol cao** tăng dần khi mức độ bị bệnh tiểu đường tăng lên. Trong nhóm không bị tiểu đường, tỷ lệ người bị cholesterol cao chiếm 39.53\%, trong khi đó tỷ lệ này ở nhóm tiền tiểu đường lại tăng lên tới 62.09\% và đạt tới 66.95\% ở nhóm bị tiểu đường.
+
+- Có thể thấy rằng nguy cơ bị cholesterol cao tăng lên khi mức độ nghiêm trọng của bệnh tiểu đường tăng lên.
+
+- Điều này cho thấy có một sự liên hệ giữa bệnh tiểu đường và cholesterol cao.
+
+## 5.4 Diabetes và Smoke
+
+```{r}
+ggplot(df_clean, aes(x = smoker, 
+               fill = smoker)) + 
+  geom_bar(stat = "count", alpha = 0.8) + 
+  geom_text(stat = "count", size = 3.5, aes(label = paste("n = ", after_stat(count))), vjust = -0.5, color = "black") +
+  facet_wrap(~ diabetes_012) +
+  labs(title = "Smoking and Diabetes", x = "Smoking", y = "Count", fill = "Smoking") +
+  theme_minimal() +
+  ylim(0, 140000) +
+  scale_fill_manual(values = c("No Smoker" = "#59c2d9", 
+                               "Smoker" = "#cb8c72")) +
+  theme(legend.position = "none")
+```
+
+```{r}
+df_clean |> tabyl(diabetes_012, smoker) |> adorn_percentages("row") |> adorn_pct_formatting(digits = 2)
+```
+
+Biểu đồ và bảng tỷ số cho ta thấy được là tỷ lệ thói quen hút thuốc dường như là tương đương bằng nhau ở cả 3 nhóm không bị tiểu đường, tiền tiểu đường và tiểu đường. Điều này cho thấy được là thói quen hút thuốc không ảnh hưởng nhiều đến nguy cơ mắc bệnh tiểu đường.
+
+## 5.5 Sex and Diabetes
+
+```{r}
+ggplot(df_clean, aes(x = sex, fill = sex)) +
+  geom_bar(stat = "count", alpha = 0.8) + 
+  geom_text(stat = "count", size = 3.5, aes(label = paste("n = ", after_stat(count))), vjust = -0.5, color = "black") +
+  facet_wrap(~ diabetes_012) +
+  labs(title = "Sex and Diabetes", 
+       x = "Sex", 
+       y = "Count", 
+       fill = "Sex") +
+  theme_minimal() +
+  theme(legend.position = "none")
+```
+
+- Bảng tỷ số
+
+```{r}
+df_clean |> tabyl(diabetes_012, sex) |> adorn_percentages("row") |> adorn_pct_formatting(digits = 2)
+```
+
+Biểu đồ và bảng tỷ số cho thấy được rằng không có sự khác biệt đáng kể giữa nam và nữ về tỷ lệ mắc bệnh tiểu đường. Qua đó, ta có thể kết luận rằng giới tính không ảnh hưởng nhiều đến nguy cơ mắc bệnh tiểu đường.
+
+## 5.6 BMI and Diabetes
+
+```{r}
+ggplot(df_clean, aes(x = diabetes_012, y = bmi, fill = diabetes_012)) +
+  geom_boxplot(width = 0.15) +
+  scale_fill_manual(breaks = c("No diabetes", "Pre-diabetes", "Diabetes"),
+                    values = c("forestgreen", "skyblue","pink")) +
+  labs(x = "Diabetes", y = "BMI") +
+  theme_bw() + 
+  theme(legend.position = "none")
+```
+
+Biểu đồ boxplot cho ta thấy được sự phân bố các giá trị BMI giữa các tình trạng bệnh tiểu đường khác nhau. Xu hướng của mỗi nhóm được thể hiện như sau:
+
+1. **No Diabetes**: Những người nằm trong nhóm này có chỉ số BMI trung bình thấp hơn so với những người nằm trong nhóm tiền tiểu đường và tiểu đường. Phạm vi tứ phân vị chủ yếu nằm trong khoảng từ 20 đến 30.
+
+2. **Pre-Diabetes**: Chỉ số BMI trung bình của nhóm này cao hơn nhóm *không bị tiểu đường* nhưng thấp hơn nhóm *bị tiểu đường*. Điều này cho thấy mối liên quan giữa tăng BMI và nguy cơ tiến triển từ tình trạng tiền tiểu đường sang tiểu đường.
+ 
+3. **Diabetes**: Nhóm này có chỉ số BMI trung bình cao nhất so với 2 nhóm còn lại và khoảng tứ phân vị đã rộng ra hơn so với nhóm tiền tiểu đường, đồng thời cũng có rất nhiều giá trị ngoại lai (outliers) của BMI ở mức rất cao. Điều này cho thấy được rằng có một mối liên hệ mạnh giữa BMI và bệnh tiểu đường, chỉ số BMI cao có thể là một trong những yếu tố nguy cơ dẫn đến bệnh tiểu đường.
+ 
+Hình ảnh trực quan xác nhận thêm rằng khi tình trạng tiểu đường tiến triển, chỉ số BMI cũng tăng theo. Điều này làm củng cố thêm nhận định rằng có mối tương quan chặt giữa chỉ số BMI và nguy cơ của việc phát triển bệnh tiểu đường. Mặt khác, sự xuất hiện của các giá trị ngoại lai (outliers) ở cả 3 nhóm cũng chỉ ra rằng mặc dù yếu tố BMI cao là một yếu tố dự báo mạnh mẽ, nhưng không phải tất cả các trường hợp đều đúng.
+
+## 5.7 Diabetes and Stroke
+
+```{r}
+ggplot(df_clean, aes(x = stroke, fill = stroke)) +
+  facet_wrap(~ diabetes_012) +
+  geom_bar(stat = "count", alpha = 0.8) + 
+  geom_text(stat = "count", size = 3.5, aes(label = paste("n = ", after_stat(count))), vjust = -0.5, color = "black") +
+  labs(title = "Diabetes and Stroke", 
+       x = "Diabetes", 
+       y = "Count", 
+       fill = "Stroke") +
+  theme_minimal() +
+  theme(legend.position = "right") +
+  scale_x_discrete(labels = NULL)
+```
+
+```{r}
+df_clean |> tabyl(diabetes_012, stroke) |> adorn_percentages("row") |> adorn_pct_formatting(digits = 2)
+```
+
+Theo như biểu đồ và bảng tỷ số phần trăm trên, ta có thể đưa ra được kết luận là bị đột quỵ trong quá khứ không phải là một yếu tố mạnh báo hiệu cho việc nguy cơ bị mắc bệnh tiểu đường, bởi vì theo như bảng tỷ số thì chưa đến 10\% số người từng bị đột quỵ trong quá khứ mắc bệnh tiểu đường. Tuy nhiên khi so sánh nhóm người bị tiểu đường so với nhóm tiền tiểu đường thì tỷ lệ bị đột quỵ trong quá khứ lại cao hơn. Điều này cho thấy rằng bệnh tiểu đường có liên quan đến nguy cơ bị đột quỵ cao hơn.
+
+## 5.8 Diabetes và HeartDiseaseorAttack
+
+```{r}
+ggplot(df_clean, aes(x = diabetes_012, fill = heart_diseaseor_attack)) +
+  geom_bar(position = "dodge") +  
+  geom_text(stat = "count", 
+            aes(label = after_stat(count), group = heart_diseaseor_attack), 
+            position = position_dodge(width = 0.9), 
+            vjust = -0.5, 
+            size = 3.5, 
+            color = "black") +
+  labs(title = "Relationship between Diabetes and Heart Disease/Attack", 
+       x = "Diabetes Status", 
+       y = "Count", 
+       fill = "Heart Disease or Attack") +
+  theme_minimal() +
+  theme(legend.position = "right")
+
+```
+
+```{r}
+df_clean |> tabyl(diabetes_012, heart_diseaseor_attack) |> adorn_percentages("row") |> adorn_pct_formatting(digits = 2)
+```
+
+
+- Tỷ lệ người đã từng được chẩn đoán mắc bệnh tim mạch vành (CHD) hoặc nhồi máu cơ tim (MI) trong quá khứ tăng dần khi chuyển từ nhóm **Không tiểu đường (8%)** sang **Tiền tiểu đường (14.34%)** và cao nhất ở nhóm **Tiểu đường (22.38%)**.
+
+- Điều này cho thấy một mối liên hệ tiềm năng giữa tình trạng bệnh tiểu đường `diabetes_012` và khả năng từng được chẩn đoán mắc bệnh tim mạch vành (CHD) hoặc nhồi máu cơ tim (MI) trong `heart_diseaseor_attack`.
+
+- Những người bị **Diabetes** có nguy cơ cao hơn đáng kể trong việc từng được chẩn đoán mắc bệnh tim mạch hoặc nhồi máu cơ tim so với nhóm **No diabetes**. Tương tự, nhóm **Pre-diabetes** cũng có nguy cơ cao hơn nhóm **No diabetes**, nhưng mức độ thấp hơn so với nhóm **Diabetes**.
+
+- Dù vậy, có 8\% người thuộc nhóm **No diabetes** vẫn từng được chẩn đoán mắc bệnh tim mạch hoặc nhồi máu cơ tim. Điều này cho thấy bệnh tiểu đường không phải là yếu tố duy nhất dẫn đến tình trạng bệnh lý tim mạch này, mà có thể còn phụ thuộc vào các yếu tố nguy cơ khác.
+
+## 5.9 Kiểm tra mối liên hệ giữa biến `diabetes_012` và các biến phân loại khác như `age`, `income`,  `education` và `gen_hlth`.
+
+Để kiểm tra mối liên hệ của biến `diabetes_012` với các biến phân loại khác như `age`, `income`, `education` và `gen_hlth`, ta sẽ sử dụng kiểm định Chi-square với mức ý nghĩa $\alpha = 0.05$ cho từng cặp biến nhằm kiểm tra tính độc lập giữa chúng.
+
+- Giữa `diabetes_012` và `age`:
+
+```{r}
+result_chisq_1 = chisq.test(table(df_clean$diabetes_012, df_clean$age))
+result_chisq_1
+```
+
+```{r}
+if(result_chisq_1$p.value < 0.05)
+{
+    print("Reject H0")
+} else
+  {
+    print("Not Reject H0")
+  }
+```
+
+Dựa vào kết quả trên, với mức ý nghĩa 5\%, ta có thể khẳng định rằng biến `diabetes_012` và `age` không độc lập với nhau. Qua đó ta có thể nói được rằng có sự liên hệ (phụ thuộc) giữa 2 biến `diabetes_012` và `age`.
+
+- Giữa `diabetes_012` và `income`:
+
+```{r}
+result_chisq_2 = chisq.test(table(df_clean$diabetes_012, df_clean$income))
+result_chisq_2
+```
+
+```{r}
+if(result_chisq_2$p.value < 0.05)
+{
+    print("Reject H0")
+} else
+  {
+    print("Not Reject H0")
+  }
+```
+
+Dựa vào kết quả trên, với mức ý nghĩa 5\%, ta có thể khẳng định rằng biến `diabetes_012` và `income` không độc lập với nhau. Qua đó ta có thể nói được rằng có sự liên hệ (phụ thuộc) giữa 2 biến `diabetes_012` và `income`.
+
+- Giữa `diabetes_012` và `education`:
+
+```{r}
+result_chisq_3 = chisq.test(table(df_clean$education, df_clean$diabetes_012))
+result_chisq_3
+```
+
+```{r}
+if(result_chisq_3$p.value < 0.05)
+{
+    print("Reject H0")
+} else
+  {
+    print("Not Reject H0")
+  }
+```
+
+Dựa vào kết quả trên, với mức ý nghĩa 5\%, ta có thể khẳng định rằng biến `diabetes_012` và `education` không độc lập với nhau. Qua đó ta có thể nói được rằng có sự liên hệ (phụ thuộc) giữa 2 biến `diabetes_012` và `education`.
+
+- Giữa `diabetes_012` và `gen_hlth`:
+
+```{r}
+result_chisq_4 = chisq.test(table(df_clean$gen_hlth, df_clean$diabetes_012))
+result_chisq_4
+```
+
+```{r}
+if(result_chisq_4$p.value < 0.05)
+{
+    print("Reject H0")
+} else
+  {
+    print("Not Reject H0")
+  }
+```
+
+Dựa vào kết quả trên, với mức ý nghĩa 5\%, ta có thể khẳng định rằng biến `diabetes_012` và `gen_hlth` không độc lập với nhau. Qua đó ta có thể nói được rằng có sự liên hệ (phụ thuộc) giữa 2 biến `diabetes_012` và `gen_hlth`.
+
+## 5.10 Diabetes với Men_Hlth và Phys_Hlth
+
+Ta sử dụng biểu đồ boxplot để trực quan hóa mối liên hệ giữa biến `diabetes_012` với `men_hlth` và `phys_hlth`.
+
+```{r}
+library(cowplot)
+
+plot1 = ggplot(df_clean, aes(x = diabetes_012, y = ment_hlth, fill = diabetes_012)) +
+  geom_boxplot(alpha = 0.6) +
+  labs(title = "Ment_Hlth and Diabetes", x = "Diabetes", y = "Ment_Hlth", fill = "Diabetes") +
+  theme_minimal() +
+  theme(legend.position = "none")
+
+plot2 = ggplot(df_clean, aes(x = diabetes_012, y = phys_hlth, fill = diabetes_012)) +
+  geom_boxplot(alpha = 0.6) +
+  labs(title = "Phys_Hlth and Diabetes", x = "Diabetes", y = "Phys_Hlth", fill = "Diabetes") +
+  theme_minimal() +
+  theme(legend.position = "top") +
+  scale_x_discrete(labels = NULL)
+
+plot_grid(plot1, plot2, ncol = 2, align = "h")
+       
+```
+
+Từ biểu đồ trên, ta có thể thấy rằng:
+
+1. **Ment_Hlth và Diabetes_012**:
+    
+    - Phân phối các giá trị của `ment_hlth` tương đối giống nhau ở cả 3 nhóm: không bị tiểu đường *(No Diabetes)*, tiền tiểu đường *(Pre-Diabetes)* và bị tiểu đường *(Diabetes)*.
+    
+    - Điều này cho thấy rằng không có sự khác biệt đáng kể về sức khỏe tinh thần giữa 3 nhóm này.
+    
+2. **Phys_Hlth và Diabetes_012**:
+
+    - Nhóm bị tiểu đường *(Diabetes)* có sự phân tán lớn hơn và có giá trị trung vị cao hơn so với 2 nhóm còn lại. Điều này cho thấy nhóm này có số ngày không khỏe về mặt thể chất nhiều hơn so với 2 nhóm còn lại.
+    
+    - Nhóm tiền tiểu đường *(Pre-Diabetes)* có khoảng tứ phân vị lớn hơn nhóm không bị tiểu đường nhưng lại nhỏ hơn nhóm bị tiểu đường, mặt khác nhóm này còn có các giá trị ngoại lai *(outliers)*.
+    
+Hình ảnh trực quan xác nhận thêm rằng khi tình trạng tiểu đường tiến triển, chỉ số về số ngày không khoẻ về mặt thể chất cũng tăng theo. Điều này làm củng cố thêm nhận định rằng có mối tương quan giữa chỉ số về số ngày không khoẻ về mặt thể chất `phys_hlth`. Mặt khác, sự xuất hiện các giá trị ngoại lai ở nhóm không tiểu đường và tiền tiểu đường cũng cho thấy rằng không thể khẳng định rõ được là biến `phys_hlth` có ảnh hưởng lớn đến việc xác định nguy cơ bệnh tiểu đường hay không. Điều này cũng tương tự với biến `ment_hlth` trong việc xác định nguy cơ bệnh tiểu đường.
+
+## 5.11 Diabetes và Fruits
+
+```{r}
+ggplot(df_clean, aes(x = fruits, fill = diabetes_012)) +
+  geom_bar(position = "dodge") +  
+  geom_text(stat = "count", 
+            aes(label = after_stat(count), group = diabetes_012), 
+            position = position_dodge(width = 0.9), 
+            vjust = -0.5, 
+            size = 3.5, 
+            color = "black") +
+  labs(title = "Fruits and Diabetes", 
+       x = "Fruits", 
+       y = "Count", 
+       fill = "Diabetes") +
+  theme_minimal() +
+  theme(legend.position = "right")
+```
+
+Biểu đồ trên cho thấy được rằng việc tiêu thụ trái cây ít nhất 1 lần mỗi ngày sẽ có thể làm giảm nguy cơ mắc bệnh tiểu đường.
+
+## 5.12 Diabetes và Veggies
+
+```{r}
+ggplot(df_clean, aes(x = veggies, fill = diabetes_012)) +
+  geom_bar(position = "dodge") +  
+  geom_text(stat = "count", 
+            aes(label = after_stat(count), group = diabetes_012), 
+            position = position_dodge(width = 0.9), 
+            vjust = -0.5, 
+            size = 3.5, 
+            color = "black") +
+  labs(title = "Veggies and Diabetes", 
+       x = "Veggies", 
+       y = "Count", 
+       fill = "Diabetes") +
+  theme_minimal() +
+  theme(legend.position = "right")
+```
+
+Tương tự với việc tiêu thụ trái cây ít nhất 1 lần mỗi ngày *(fruits)* thì việc tiêu thụ rau củ ít nhất 1 lần mỗi ngày *(Veggies)* cũng giúp giảm nguy cơ mắc bệnh tiểu đường.
+
+Từ quá trình khám phá phân tích dữ liệu trên, ta có được các biến quan trọng có thể ảnh hưởng đến nguy cơ mắc bệnh tiểu đường như `high_bp`, `high_chol`, `bmi`, `phys_hlth`, `ment_hlth`, `gen_hlth`, `age`, `income`, `education`, `heart_diseaseor_attack`, `veggies` và `fruits`.
+
+# 6. Đặt câu hỏi và mục tiêu
+
+Mục tiêu của bài báo cáo này là phân tích các yếu tố sức khỏe có liên quan đến bệnh tiểu đường, đánh giá mức độ tương quan giữa các yếu tố này và xác định các yếu tố nguy cơ chính. Từ đó, hỗ trợ việc xây dựng các mô hình dự đoán hiệu quả nhằm cải thiện khả năng nhận diện sớm và quản lý bệnh tiểu đường.
+
+Để đạt được mục tiêu này, bài báo cáo sẽ tập trung vào việc trả lời các câu hỏi sau:
+
+1. **Các yếu tố sức khỏe nào có tương quan đáng kể với nguy cơ mắc bệnh tiểu đường?**
+
+    Sử dụng phân tích thống kê và kiểm định giả thuyết (A/B Testing) để kiểm tra mối liên hệ giữa từng yếu tố sức khỏe với tình trạng bệnh tiểu đường.
+
+2. **Mô hình logistic regression có thể dự đoán khả năng mắc bệnh tiểu đường dựa trên các yếu tố sức khỏe không? Nếu có, mô hình này có hiệu quả ra sao?**
+
+    Áp dụng kỹ thuật mô hình hóa dữ liệu (multinomial logistic regression) để xây dựng và đánh giá mô hình dự đoán.
+
+<!-- Phương pháp: -->
+
+<!-- **A/B Testing:** So sánh giữa hai nhóm (ví dụ: nhóm mắc bệnh và nhóm không mắc bệnh) để kiểm tra các yếu tố sức khỏe như mức độ vận động, chế độ ăn uống, hoặc chỉ số BMI có ảnh hưởng đáng kể đến bệnh tiểu đường hay không. -->
+
+<!-- **Mô hình hóa dữ liệu:** Sử dụng logistic regression để xác định mối quan hệ giữa các biến đầu vào (các yếu tố sức khỏe) và biến đầu ra (tình trạng mắc bệnh tiểu đường), từ đó đánh giá khả năng dự đoán và ý nghĩa thống kê của từng yếu tố. -->
+
+Phương pháp:
+
+**A/B Testing:** So sánh giữa hai nhóm (ví dụ: nhóm mắc bệnh và nhóm không mắc bệnh) để kiểm tra các yếu tố sức khỏe như mức độ vận động, chế độ ăn uống, hoặc chỉ số BMI có ảnh hưởng đáng kể đến bệnh tiểu đường hay không.
+
+**Mô hình hóa dữ liệu:** Sử dụng logistic regression để xác định mối quan hệ giữa các biến giải thích (các yếu tố sức khỏe) và biến phụ thuộc (tình trạng mắc bệnh tiểu đường), từ đó đánh giá khả năng dự đoán và ý nghĩa thống kê của từng yếu tố.
+
+# 7. Kiểm định Chi-square và A/B Testing
+
+Để làm rõ hơn quyết định ở phía trên, ta sẽ thực hiện kiểm định Chi-square để kiểm tra tính độc lập giữa các biến nhị phân và biến phản hồi `diabetes_012`.
+
+## 7.1 Kiểm định Chi-square
+
+- Kiểm tra sự độc lập giữa biến `diabetes_012` và các biến nhị phân khác.
+```{r}
+vars = c("high_bp", "high_chol", "chol_check", "smoker","stroke","heart_diseaseor_attack","phys_activity",
+          "fruits","veggies","hvy_alcohol_consump","any_healthcare","no_docbc_cost","diff_walk","sex")
+
+for (var in vars) 
+{
+  test_result = chisq.test(table(df_clean$diabetes_012, df[[var]]))
+  is_independent = test_result$p.value > 0.05
+  cat("Is diabetes_012 and", var, "independent of each other?", is_independent, "\n")
+}
+```
+
+Kết quả cho thấy, có sự liên hệ **(phụ thuộc)** với nhau giữa biến diabetes_012 và các biến nhị thức khác có trong bộ dữ liệu.
+
+## 7.2 ANOVA cho trung bình biến BMI theo từng nhóm của `diabetes_012`
+
+Ta sẽ kiểm tra xem sự khác biệt trung bình giữa biến `bmi` trong bộ dữ liệu theo các nhóm trong biến `diabetes_012` là có ý nghĩa thống kê hay không.
+
+
+```{r}
+df_clean |> group_by(diabetes_012) |> summarise(n=n(),mean_bmi=mean(bmi),sd_bmi=sd(bmi))
+```
+
+```{r}
+new_df_bmi = data.frame(diabetes = df_clean$diabetes_012, bmi = df_clean$bmi)
+glimpse(new_df_bmi)
+```
+
+```{r}
+# ggplot(new_df_bmi, aes(x = diabetes, y = bmi, fill = diabetes)) +
+#   geom_boxplot(width = 0.15) +
+#   scale_fill_manual(breaks = c("No diabetes", "Pre-diabetes", "Diabetes"),
+#                     values = c("forestgreen", "skyblue","pink")) +
+#   labs(x = "Diabetes", y = "BMI") +
+#   theme_bw() + 
+#   theme(legend.position = "none")
+```
+
+```{r}
+set.seed(42)
+df_aov = aov(formula = bmi ~ diabetes_012, data = df_clean)
+summary(df_aov)
+```
+Do $p-value<0.05$ nên sự khác biệt trung bình `bmi` giữa các nhóm `diabetes_012` là có ý nghĩa thống kê.
+
+
+
+# 8. Mô hình hóa dữ liệu
+
+Sử dụng để xác định khả năng dự đoán khả năng mắc bệnh tiểu đường dựa trên các yếu tố sức khỏe.
+
+Nhận thấy rằng tiền tiểu đường cũng tương tự như tiểu đường, nên ta sẽ gộp nhóm Tiền tiểu đường vào nhóm Tiểu đường. Thay vì tạo ra một mô hình để xác định xem một người có nguy cơ mắc bệnh tiểu đường, có nguy cơ bị tiền tiểu đường, hay không có nguy cơ mắc bệnh tiểu đường thì mô hình bây giờ chỉ xác định xem một người có nguy cơ mắc bệnh tiểu đường hoặc là không.
+
+```{r}
+df_clean$diabetes_012 = as.character(df_clean$diabetes_012)
+df_clean$diabetes_012 = as.factor(ifelse(df_clean$diabetes_012 == "No diabetes", "No diabetes", "Diabetes"))
+df_clean$diabetes_012 = factor(df_clean$diabetes_012, levels = c("No diabetes", "Diabetes"))
+```
+
+Trước khi xây dựng mô hình, ta sẽ vẽ biểu đồ tương quan giữa các biến định lượng và biến phản hồi (diabetes_012) trong dữ liệu gốc `df` ban đầu để xác định mức độ tương quan giữa chúng.
+
+Tạo ma trận tương quan cho các biến.
+
+```{r include=FALSE}
+library(DT)
+```
+
+```{r}
+corr_matrix = cor(df, method = "pearson")
+corr_table = as.data.frame(round(corr_matrix, 2))
+datatable(
+  corr_table,
+  options = list(
+    scrollX = TRUE,
+    pageLength = 22
+  )) |> htmltools::tags$div(
+    style = "font-size: 12px; width: 80%; margin: auto;" )
+```
+
+Vẽ biểu đồ tương quan của các biến định lượng để kiểm tra hệ số tương quan của từng cặp biến trong dữ liệu. Sử dụng hàm `corrplot()` trong thư viện `corrplot`.
+
+```{r}
+corrplot(corr_matrix,
+         method = "color",
+         tl.col = "black",
+         tl.cex = 0.55,
+         insig = "blank")
+```
+
+Dựa vào ma trận và biểu đồ tương quan trên, ta có thể nhận thấy được mối quan hệ giữa biến `diabetes_012` và các biến khác trong dữ liệu như sau:
+
+- Biến `fruits`, `any_healthcare`, `no_docbc_cost`, `veggies`, `sex` và `hvy_alcohol_consump` có mối tương quan yếu với biến `diabetes_012`.
+
+- Các biến `high_bp`, `high_chol`, `chol_check`, `bmi`, `smoker`, `stroke`, `heart_diseaseor_attack`, `phys_activity`, `gen_hlth`, `ment_hlth`, `phys_hlth`, `diff_walk`, `age`, `education` và `income` có mối tương quan đáng kể với biến `diabetes_012`.
+
+## 8.1 Xây dựng mô hình
+
+Dựa vào các biến trên ta có thể xây dựng được rất nhiều mô hình. Vì biến phản hồi (Y) là biến nhị phân nên mô hình phù hợp nhất là mô hình logistic regression.
+
+Từ các quá trình khám phá phân tích dữ liệu và biểu đồ tương quan đã phân tích trước đó, ta sẽ chọn ra các biến sau: `high_bp`, `high_chol`, `bmi`, `phys_hlth`, `ment_hlth`, `gen_hlth`, `age`, `income`, `education`, `heart_diseaseor_attack`, `stroke` để xây dựng mô hình.
+
+Khi đó ta có được mô hình sau:
+
+$$\log \frac{p(x)}{1 - p(x)} = \beta_0 + \beta_1 \text{high_bp} + \beta_2 \text{high_chol} + \beta_3 \text{bmi} + \beta_4 \text{phys_hlth} + \\ \beta_5 \text{ment_hlth} + \beta_6 \text{gen_hlth} + \beta_7 \text{age} + \beta_8 \text{income} + \beta_9 \text{education} + \beta_{10} \text{heart_diseaseor_attack} + \beta_{11} \text{stroke}$$
+
+```{r}
+logistic_md = glm(diabetes_012 ~ high_bp + 
+                    high_chol + 
+                    bmi + 
+                    phys_hlth + 
+                    ment_hlth + 
+                    gen_hlth + 
+                    age + 
+                    income + 
+                    education + 
+                    heart_diseaseor_attack + 
+                    stroke, 
+                  data = df_clean, family = "binomial")
+```
+
+- Kiểm tra hiện tượng đa cộng tuyến bằng hàm `vif`.
+
+```{r}
+vif(logistic_md)
+```
+
+Với $j = \overline{1, 11}$, ta thấy rằng $VIF_{j}$ đều nhỏ hơn 5. Do đó, ta kết luận rằng không có hiện tượng đa cộng tuyến trong mô hình.
+
+Kết quả tổng hợp như sau:
+
+```{r}
+summary(logistic_md)
+```
+
+Từ kết quả trên, ta có thể rút ra một số kết luận như sau:
+
+- Hệ số dương của biến `high_bpHigh Blood` cho thấy những người bị huyết áp cao có khả năng mắc bệnh tiểu đường cao hơn so với những người không bị huyết áp cao. Việc tăng một đơn vị của biến `high_bp` sẽ làm tăng tỷ lệ mắc bệnh tiểu đường lên $exp(0.679) \approx 1.972$ lần.
+
+- Hệ số dương của biến `high_cholHigh Cholesterol` cho thấy những người bị cholesterol cao có khả năng mắc bệnh tiểu đường cao hơn so với những người không bị cholesterol cao.
+
+- Hệ số dương đối với `bmi` cho thấy rằng việc tăng chỉ số BMI có liên quan đến việc tăng nguy cơ mắc bệnh tiểu đường.
+
+- Việc tăng một đơn vị BMI có liên quan đến việc tăng tỷ lệ mắc bệnh tiểu đường là $exp(0.0589) \approx 1.06$ lần.
+
+- Hệ số âm đối với `phys_hlth` cho thấy rằng người cảm thấy không khoẻ về mặt thể chất với số ngày càng nhiều thì càng dễ có nguy cơ mắc bệnh tiểu đường hơn là những người không khoẻ về mặt thể chất với số ngày càng ít.
+
+- Hệ số âm cho `ment_hlth` cho thấy người nào cảm thấy không khoẻ về mặt tinh thần với số ngày càng ít thì càng ít có khả năng bị mắc bệnh tiểu đường hơn là những người không khoẻ về mặt tinh thần với số ngày càng nhiều.
+
+- Từ hệ số dương cho `gen_hlthVery Good`, `gen_hlthGood`, `gen_hlthFair`, `gen_hlthPoor` càng tăng dần khi chỉ số từ `Very Good` cho tới `Poor` ta thấy rằng người có sức khỏe tốt, khá, trung bình hoặc kém hơn so với người có sức khỏe xuất sắc có khả năng mắc bệnh tiểu đường cao hơn.
+
+- Với các biến `education2`, `education3`, `education4` và `education5` và `education6` có giá trị $p-value$ đều lớn hơn $\alpha = 0.05$ nên chúng không có ý nghĩa thống kê đối với mô hình hồi quy logistic.
+
+- Với hệ số âm cho các biến từ `income2` cho tới `income6` càng giảm dần thì cho ta thấy được là một người có thu nhập cao thì càng ít có khả năng mắc bệnh tiểu đường hơn vì có các dịch vụ y tế, chăm sóc sức khỏe tốt hơn.
+
+- Với hệ số dương cho biến `age` càng tăng dần theo độ tuổi cho ta biết được là người càng cao tuổi càng có nguy cơ bị mắc bệnh tiểu đường.
+
+- Hệ số dương của biến `heart_diseaseor_attack` cho thấy rằng những người đã từng mắc bệnh tim hoặc đau tim thì sẽ dễ mắc bệnh tiểu đường hơn là những người không mắc bệnh tim hoặc đau tim. Nói đúng hơn là, nếu tăng một đơn vị về biến `heart_diseaseor_attack` thì sẽ làm tăng tỉ lệ mắc bệnh tiểu đường là $exp(0.27) \approx 1.31$ lần.
+
+- Hệ số dương của biến `stroke` cũng cho ta thấy được rằng những người đã từng mắc đột quỵ thì sẽ dễ dàng mắc bệnh tiểu đường hơn là người chưa từng bị mắc bệnh đột quỵ.
+
+Tiếp theo, ta áp dụng phương pháp bootstrap để ước lượng khoảng tin cậy và kiểm định giả thuyết $\beta_j = 0$. Tức là ta đi kiểm tra cặp **Giả thuyết** và **Đối thuyết** sau:
+
+- **Giả thuyết:** $\beta_j = 0$.
+
+- **Đối thuyết:** $\beta_j \neq 0$.
+
+Kiểm định *Giả thuyết* này tương đương với việc trả lời câu hỏi: *"Có sự tồn tại mối liên hệ giữa biến $X_j$ và $Y$ hay không?"*.
+
+Định nghĩa hàm để thực hiện ước tính mỗi lần lặp lấy mẫu:
+
+```{r}
+function_boot = function(df, index, formula, ...)
+{
+    df_new = df[index, ]
+    out_md = speedglm(formula = formula, data = df_new, family = binomial(), ...)
+    return(out_md$coefficients)
+}
+```
+
+Thực hiện bootstrap:
+```{r, cache=TRUE}
+set.seed(124)
+
+df_temp = df_clean[, c("diabetes_012", "high_bp", "high_chol", "bmi", "phys_hlth",
+                         "ment_hlth", "gen_hlth", "age", "income", "education",
+                         "heart_diseaseor_attack", "stroke")]
+
+
+out_boot_md = boot(data = df_temp,
+                        statistic = function_boot,
+                        R = 500,
+                        formula = diabetes_012 ~ high_bp +
+                     high_chol +
+                     bmi +
+                     phys_hlth +
+                     ment_hlth +
+                     gen_hlth +
+                     age +
+                     income +
+                     education +
+                     heart_diseaseor_attack +
+                     stroke)
+out_boot_md
+```
+
+Ước tính khoảng tin cậy $95\%$ cho các hệ số ước lượng bằng bootstrap:
+
+```{r}
+extract_ci = function(boot_object, level = 0.95) {
+    ci_results = lapply(1:ncol(boot_object$t), function(i) {
+        ci = boot.ci(boot_object, type = "perc", index = i)
+        if (!is.null(ci)) {
+            return(c(ci$t0, ci$percent[4:5]))
+        } else {
+            return(c(NA, NA, NA))
+        }
+    })
+    ci_matrix = do.call(rbind, ci_results)
+    colnames(ci_matrix) = c("Estimate", "Lower_CI", "Upper_CI")
+    return(ci_matrix)
+}
+
+ci_data = extract_ci(out_boot_md)
+
+variable_names = c("(Intercept)", names(coef(glm(diabetes_012 ~ high_bp +
+                                                  high_chol + bmi + phys_hlth +
+                                                  ment_hlth + gen_hlth + age +
+                                                  income + education +
+                                                  heart_diseaseor_attack + stroke,
+                                                  data = df_temp, family = binomial())))[-1])
+
+results_df = data.frame(
+    Variable = variable_names,
+    Estimate = ci_data[, "Estimate"],
+    Lower_CI = ci_data[, "Lower_CI"],
+    Upper_CI = ci_data[, "Upper_CI"]
+)
+
+print(results_df)
+```
+
+- Tính p-value cho kiểm định giả thuyết $\beta_j = 0$:
+
+```{r}
+pvals_adv2 = sapply(1:ncol(out_boot_md$t), function(x)
+{
+    qt0 = mean(out_boot_md$t[, x] <= 0)
+    if (qt0 < 0.5) {
+        return(2 * qt0)
+    } else {
+        return(2 * (1 - qt0))
+    }
+})
+
+pvals_vector = unlist(pvals_adv2)
+pvals_vector = round(pvals_vector, 3)
+names(pvals_vector) = variable_names
+pvals_vector
+```
+
+Thực hiện kiểm tra với mức ý nghĩa $\alpha = 0.05$:
+
+```{r}
+select_vars = function(pvals_vector, alpha = 0.05)
+{
+    vars = c()
+    for (i in 1:length(pvals_vector))
+    {
+        if (pvals_vector[i] <= alpha)
+        {
+            vars = c(vars, names(pvals_vector)[i])
+        }
+    }
+    return(vars)
+}
+
+p_val_variables = select_vars(pvals_vector)
+
+p_val_variables
+```
+
+Như vậy, ta có thể thấy rằng có 10 biến có ý nghĩa thống kê với mức ý nghĩa $\alpha = 0.05$ là `high_bp`, `high_chol`, `bmi`, `phys_hlth`, `ment_hlth`, `gen_hlth`, `age`, `income`, `heart_diseaseor_attack`, `stroke`. Do đó ta có thể loại bỏ biến `education` ra khỏi mô hình.
+
+Bây giờ, giả sử ta có thông tin về 5 người và chúng ta muốn dự đoán xác suất họ mắc bệnh tiểu đường. Thông tin được đưa ra như sau:
+
+|  id  |     high_bp    |       high_chol      |  bmi  |  phys_hlth  |  ment_hlth  |  gen_hlth  |  age  |  income  |  education  |  heart_diseaseor_attack  |      stroke      |
+|------|----------------|----------------------|-------|-------------|-------------|------------|-------|----------|-------------|--------------------------|------------------|
+|  1   |   High Blood   |   High Cholesterol   |   27  |      0      |      0      |     Good   |   10  |     6    |      6      |            No            |    No Stroke     |
+|  2   |   High Blood   |   High Cholesterol   |   40  |      0      |      0      |     Fair   |   9   |     6    |      6      |            No            |    No Stroke     |
+|  3   |  No High Blood | No High Cholesterol  |   32  |      0      |      0      |     Good   |   4   |     8    |      6      |            No            |    No Stroke     |
+|  4   |   High Blood   |   High Cholesterol   |   24  |      0      |      0      |     Good   |   13  |     3    |      5      |            No            |    No Stroke     |
+|  5   | No High Blood  | No High Cholesterol  |   24  |      0      |      0      |  Excellent |    6  |     8    |      5      |            No            |    No Stroke     |
+
+```{r}
+new_data = tibble(high_bp = factor(c("High Blood", "High Blood", "No High Blood", "High Blood", "No High Blood"),
+                                   levels = c("No High Blood", "High Blood")),
+                  high_chol = factor(c("High Cholesterol", "High Cholesterol", "No High Cholesterol", "High Cholesterol", "No High Cholesterol"),
+                                     levels = c("No High Cholesterol", "High Cholesterol")),
+  bmi = c(27, 40, 32, 24, 24),
+  phys_hlth = c(0, 0, 0, 0, 0),
+  ment_hlth = c(0, 0, 0, 0, 0),
+  gen_hlth = factor(c("Good", "Fair", "Good", "Good", "Excellent"),
+                    levels = c("Excellent", "Very Good", "Good", "Fair", "Poor")),
+  age = as.factor(c(10, 9, 4, 13, 6)),
+  income = as.factor(c(6, 6, 8, 3, 8)),
+  education = as.factor(c(6, 6, 6, 5, 5)),
+  heart_diseaseor_attack = factor(c("No", "No", "No", "No", "No"),
+                                  levels = c("No", "Yes")),
+  stroke = factor(c("No Stroke", "No Stroke", "No Stroke", "No Stroke", "No Stroke"),
+                  levels = c("No Stroke", "Stroke")))
+```
+
+Ta sẽ phân loại 5 người trên thành hai nhóm là: `Không mắc bệnh tiểu đường` và `Mắc bệnh tiểu đường` bằng cách so sánh xác suất ở ngưỡng $c = 0.5$.
+
+```{r}
+predict_prob = predict(logistic_md, newdata = new_data, type = "response")
+ifelse(predict_prob > 0.5, "Diabetes", "No Diabetes")
+```
+
+## 8.2 Lựa chọn mô hình
+
+Từ những mô hình trên, ta vẫn chưa thể kết luận được là những mô hình trên đâu là mô hình tốt nhất. Do đó ta sẽ thực hiện các phương pháp để tìm ra mô hình hồi quy tốt nhất.
+
+Ta có thể sử dụng 1 trong 3 phương pháp sau:
+
+- Hồi quy từng bước.
+
+- Hồi quy từng bước và cross - validation.
+
+- Phương pháp co hệ số.
+
+Vì số lượng biến khá nhiều nên ta sẽ sử dụng phương pháp co hệ số.
+
+Sử dụng hàm `glmnet()` trong thư viện `glmnet`  để thực hiện ridge regression và lasso regression.
+
+- Định nghĩa ma trận chứa các biến có thể có trong mô hình và vector của biến phụ thuộc.
+
+```{r include=FALSE}
+library(glmnet)
+```
+
+```{r}
+x_df = model.matrix(diabetes_012 ~ ., data = df_clean)[, -1]
+y_df = df_clean$diabetes_012
+```
+
+- Tạo các vector gồm các giá trị cho turning parameter $\lambda$. Các $\lambda$ này sẽ giảm dần từ $10^{10}$ đến $10^{-2}$.
+
+```{r}
+lambda_grid = 10^seq(10, -2, length = 100)
+```
+
+- Thực hiện 5-fold cross-validation cho lasso regression bằng hàm `cv.glmnet()`.
+
+```{r, cache=TRUE}
+set.seed(121)
+out_cv_lasso = cv.glmnet(x = x_df, y = y_df, alpha = 1,
+                         type.measure = "mse", nfolds = 5,
+                         family = "binomial")
+print(out_cv_lasso)
+```
+
+Kết quả cho thấy $\lambda$ tối ưu là  $\lambda = 6.95 \times 10^{-5}$, tương ứng với bình phương sai số (mean squared error) là 0.2347. Đồng thời, ta thu được 44 hệ số khác 0.
+
+Ước lượng các hệ số trong mô hình sử dụng toàn bộ dữ liệu bằng cách sử dụng $\lambda$ tối ưu vừa thu được:
+
+```{r, cache=TRUE}
+beta_lambda_lasso = out_cv_lasso$lambda.min
+out_lasso_md = glmnet(x = x_df, y = y_df, alpha = 1,
+ lambda = lambda_grid, family = "binomial")
+```
+
+```{r, cache=TRUE}
+predict(out_lasso_md, s = beta_lambda_lasso, type = "coefficients")
+```
+
+**Kết luận:**  Kết quả cho thấy các biến `smokerSmoker`, `phys_activityYes`, `fruitsYes`, `veggiesYes`, `any_healthcareYes`, `no_docbc_costYes`, `gen_hlthVery Good`, `ment_hlth`, `age6`, `age7`, `age8`, `age9`, `age13`, `education2`, `education3`, `education4`, `education5`, `education6`, `income2`, `income3`, `income4`, `income5`, `income6`, `income7` có hệ số ước lượng bằng không. Như vậy, ta có thể sử dụng mô hình logistic regression với các biến còn lại để dự đoán biến phụ thuộc `diabetes_012`. Khi đó mô hình được chọn sẽ có 12 biến bao gồm các biến `high_bp`, `high_chol`, `chol_check`, `bmi`, `stroke`, `heart_diseaseor_attack`, `hvy_alcohol_consump`, `gen_hlth`, `diff_walk`, `sex`, `age`, `income`.
+
+Vậy ta sẽ có được mô hình logistic regression khác như sau:
+
+```{r}
+logistic_md_select = glm(diabetes_012 ~ high_bp +
+                    high_chol +
+                    chol_check +
+                    bmi +
+                    stroke +
+                    hvy_alcohol_consump +
+                    gen_hlth +
+                    age +
+                    income +
+                    sex +
+                    diff_walk +
+                    heart_diseaseor_attack,
+                  data = df_clean, family = "binomial")
+```
+
+- Kiểm tra hiện tượng đa cộng tuyến bằng hàm `vif`.
+
+```{r}
+vif(logistic_md_select)
+```
+
+Với $j = \overline{1, 12}$, ta thấy rằng $VIF_{j}$ đều nhỏ hơn 5. Do đó, ta kết luận rằng không có hiện tượng đa cộng tuyến trong mô hình.
+
+Kết quả tổng hợp như sau:
+
+```{r}
+summary(logistic_md_select)
+```
+
+**Nhận xét:**
+
+- Hệ số dương của biến `high_bpHigh Blood` cho thấy những người bị huyết áp cao có khả năng mắc bệnh tiểu đường cao hơn so với những người không bị huyết áp cao. Việc tăng một đơn vị của biến `high_bp` sẽ làm tăng tỷ lệ mắc bệnh tiểu đường lên $exp(0.659) \approx 1.933$ lần.
+
+- Hệ số dương của biến `high_cholHigh Cholesterol` cho thấy những người bị cholesterol cao có khả năng mắc bệnh tiểu đường cao hơn so với những người không bị cholesterol cao.
+
+- Hệ số dương đối với `bmi` cho thấy rằng việc tăng chỉ số BMI có liên quan đến việc tăng nguy cơ mắc bệnh tiểu đường.
+
+- Việc tăng  đơn vị BMI có liên quan đến việc tăng tỷ lệ mắc bệnh tiểu đường là $exp(0.057) \approx 1.06$ lần.
+
+- Hệ số âm đối với `strokeStroke` cho thấy rằng người từng bị đột quỵ trong quá khứ có khả năng mắc bệnh tiểu đường ít hơn so với những người chưa từng bị đột quỵ.
+
+- Hệ số âm đối với biến `hvy_alcohol_consump` cho thấy rằng người tiêu thụ rượu nặng có nguy cơ mắc bệnh tiểu đường thấp hơn so với người không tiêu thụ rượu nặng. Tuy nhiên, điều này không phải là một kết luận chắc chắn vì tiêu thụ rượu nặng quá nhiều cũng không tốt cho sức khoẻ.
+
+- Từ hệ số dương cho `gen_hlthVery Good`, `gen_hlthGood`, `gen_hlthFair`, `gen_hlthPoor` càng tăng dần khi chỉ số từ `Very Good` cho tới `Poor` ta thấy rằng người có sức khỏe tốt, khá, trung bình hoặc kém hơn so với người có sức khỏe xuất sắc có khả năng mắc bệnh tiểu đường cao hơn.
+
+- Với hệ số âm cho các biến từ `income2` cho tới `income6` càng giảm dần thì cho ta thấy được là một người có thu nhập cao thì càng ít có khả năng mắc bệnh tiểu đường hơn vì có các dịch vụ y tế, chăm sóc sức khỏe tốt hơn.
+
+- Với hệ số dương cho biến `age` càng tăng dần theo độ tuổi cho ta biết được là người càng cao tuổi càng có nguy cơ bị mắc bệnh tiểu đường.
+
+- Hệ số dương của biến `heart_diseaseor_attackYes` cho thấy rằng những người đã từng mắc bệnh tim hoặc đau tim thì sẽ dễ mắc bệnh tiểu đường hơn là những người không mắc bệnh tim hoặc đau tim. Nói đúng hơn là, nếu tăng một đơn vị về biến `heart_diseaseor_attack` thì sẽ làm tăng tỉ lệ mắc bệnh tiểu đường là $exp(0.214) \approx 1.24$ lần.
+
+- Việc tăng một đơn vị của biến `sex` sẽ làm tăng tỷ lệ mắc bệnh tiểu đường lên $exp(0.112) \approx 1.12$ lần.
+
+- Hệ số dương của biến `diff_walk` cho thấy rằng người gặp khó khăn khi leo cầu thang có khả năng mắc bệnh tiểu đường cao hơn so với người không gặp khó khăn khi leo cầu thang.
+
+- Tất cả các biến trong mô hình đều có $p_{value} < 0.05$ nên chúng đều có ý nghĩa thống kê với mô hình.
+
+Giả sử ta có thông tin về 5 người và chúng ta muốn dự đoán xác suất họ mắc bệnh tiểu đường. Thông tin được đưa ra như sau:
+
+|  id  |     high_bp    |       high_chol      | chol_check |  bmi  |  stroke  |  hvy_alcohol_consump  |  gen_hlth  |  age  |  income  |   sex   |  diff_walk  |  heart_diseaseor_attack  |
+|------|----------------|----------------------|------------|-------|----------|-----------------------|------------|-------|----------|---------|-------------|--------------------------|
+|  1   |   High Blood   |  High Cholesterol    |     Yes    |  41   | No Stroke|           No          |    Fair    |   9   |     8    |   Male  |      No     |           No             |
+|  2   |  No High Blood |  No High Cholesterol |     Yes    |  24   | No Stroke|           No          | Very Good  |   3   |     7    |  Female |      No     |           No             |
+|  3   |   High Blood   |  High Cholesterol    |     Yes    |  26   | No Stroke|           No          |    Good    |   13  |     6    |   Male  |      No     |           No             |
+|  4   |  No High Blood |  High Cholesterol    |     Yes    |  30   | No Stroke|           No          | Very Good  |   7   |     7    |   Male  |      No     |           No             |
+|  5   |   High Blood   |  High Cholesterol    |     Yes    |  22   | No Stroke|           No          |    Poor    |   13  |     2    |  Female |      Yes    |           Yes            |
+
+
+```{r}
+new_data_1 = tibble(high_bp = factor(c("High Blood", "No High Blood", "High Blood", "No High Blood", "High Blood"),
+                   levels = c("No High Blood", "High Blood")),
+  high_chol = factor(c("High Cholesterol", "No High Cholesterol", "High Cholesterol", "High Cholesterol", "No High Cholesterol"),
+                     levels = c("No High Cholesterol", "High Cholesterol")),
+  chol_check = factor(c("Yes", "Yes", "Yes", "Yes", "Yes"), levels = c("No", "Yes")),
+  bmi = c(41, 24, 26, 30, 22),
+  stroke = factor(c("No Stroke", "No Stroke", "No Stroke", "No Stroke", "No Stroke"),
+                  levels = c("No Stroke", "Stroke")),
+  hvy_alcohol_consump = factor(c("No", "No", "No", "No", "No"), levels = c("No", "Yes")),
+  gen_hlth = factor(c("Fair", "Very Good", "Good", "Very Good", "Poor"),
+                    levels = c("Excellent", "Very Good", "Good", "Fair", "Poor")),
+  age = as.factor(c(9, 3, 13, 7, 13)),
+  income = as.factor(c(8, 7, 6, 7, 2)),
+  sex = factor(c("Male", "Female", "Male", "Male", "Female"), levels = c("Female", "Male")),
+  diff_walk = factor(c("No", "No", "No", "No", "Yes"), levels = c("No", "Yes")),
+  heart_diseaseor_attack = factor(c("No", "No", "No", "No", "Yes"),
+                                  levels = c("No", "Yes")))
+```
+
+Ta sẽ phân loại 5 người trên thành hai nhóm là: `Không mắc bệnh tiểu đường` và `Mắc bệnh tiểu đường` bằng cách so sánh xác suất ở ngưỡng $c = 0.5$.
+
+```{r}
+predict_prob = predict(logistic_md_select, newdata = new_data_1, type = "response")
+ifelse(predict_prob > 0.5, "Diabetes", "No Diabetes")
+```
+
+## 8.3 Chuẩn đoán mô hình
+
+Ta sẽ thực hiện chuẩn đoán mô hình đã lựa chọn các cặp biến tốt nhất ở trên (mô hình `logistic_md_select`).
+
+### 8.3.1 Kiểm tra tính tuyến tính của mô hình
+
+```{r, cache=TRUE}
+augmented_df_select = augment(logistic_md_select, data = df_clean)
+ggplot(data = augmented_df_select, mapping = aes(x = .fitted, y = .resid))+
+geom_point() +
+geom_smooth(method = "loess", formula = y ~ x, se = FALSE) +
+geom_hline(yintercept = 0, linetype = "dashed", color = "red") +
+labs(x = "Fitted values", y = "Residuals") +
+theme_bw()
+```
+
+**Nhận xét:** Hình vẽ cho thấy xu hướng đường cong là tương đối.
+
+$\Rightarrow$ Giả định về tính tuyến tính của mô hình là không phù hợp.
+
+### 8.3.2 Kiểm tra  tính tuyến tính từng phần
+
+Vì chỉ có biến `bmi` là biến định lượng trong khi các biến còn lại của mô hình là định tính nên ta chỉ kiểm tra tính tuyến tính từng phần cho biến `bmi`.
+
+```{r}
+terms_md_select = predict(logistic_md_select, type = "terms")
+residuals_md_select = residuals(logistic_md_select, type = "working")
+partial_resid_bmi_select = residuals_md_select + terms_md_select[, "bmi"]
+```
+
+```{r}
+data_part_resid_bmi_select = tibble(
+  bmi = df_clean$bmi,
+  terms_bmi_select = terms_md_select[, "bmi"],
+  partial_resid_bmi_select = partial_resid_bmi_select)
+```
+
+```{r, cache=TRUE}
+ggplot(data_part_resid_bmi_select, aes(bmi, partial_resid_bmi_select)) +
+  geom_point() +
+  geom_smooth(method = "loess",
+              se = FALSE,
+              color = "forestgreen",
+              linetype = "dashed") +
+  geom_line(aes(x = bmi, y = terms_bmi_select), color = "blue") +
+  labs(x = "BMI", y = "Partial Residuals") +
+  theme_bw()
+```
+
+**Nhận xét:** Kết quả cho thấy đường thẳng tuyến tính (*màu xanh dương*) ước lượng tương đối khớp với dữ liệu.
+
+$\Rightarrow$ Có sự tuyến tính từng phần giữa biến `bmi` và biến phụ thuộc.
+
+Vậy thì có thể là do có nhiều biến định tính nên mô hình bị ảnh hưởng dẫn tới sự không tuyến tính trong mô hình.
+
+### 8.3.3 Kiểm tra tính đồng nhất phương sai
+
+```{r, cache=TRUE}
+ggplot(augmented_df_select, aes(.fitted, sqrt(abs(residuals(logistic_md_select, type = "deviance"))))) +
+  geom_point(na.rm = TRUE, alpha = 0.4) +
+  geom_smooth(method = "loess",
+              na.rm = TRUE,
+              se = FALSE,
+              formula = y ~ x) +
+  labs(x = "Fitted Values", y = expression(sqrt("|Standardized residuals|"))) +
+ theme_bw()
+```
+
+**Nhận xét:** 
+
+- Ở hai đầu của trục fitted values (xấp xỉ -7.5 và +2.5), residuals có giá trị lớn hơn đáng kể so với phần giữa. Điều này chỉ ra rằng phương sai không đồng nhất, đặc biệt khi fitted values xa trung tâm.
+
+- Đường xu hướng dữ liệu (*màu xanh dương*) không phải là một đường ngang và cho thấy sự thay đổi theo giá trị fitted values.
+
+$\Rightarrow$ Mô hình không đáp ứng được giả định về tính đồng nhất phương sai. Có thể là do có nhiều biến định tính nên mô hình bị ảnh hưởng dẫn tới sự không đồng nhất phương sai trong mô hình.
+
+### 8.3.4 Kiểm tra điểm ngoại lai trong mô hình
+
+```{r, cache=TRUE}
+plot(logistic_md_select, which = 4, id.n = 3)
+```
+
+```{r, cache=TRUE}
+ggplot(logistic_md_select, aes(.hat, .stdresid)) +
+  geom_point(aes(size = .cooksd, color = diabetes_012)) +
+  xlab("Leverage") +
+  ylab("Standardized Residuals") +
+  scale_size_continuous("Cook's Distance", range = c(1, 6)) +
+  theme_bw() +
+  theme(legend.position = "bottom")
+```
+
+```{r}
+std_resid_md_select = rstandard(logistic_md_select)
+hat_values_md_select = hatvalues(logistic_md_select)
+cooks_D_md_select = cooks.distance(logistic_md_select)
+```
+
+```{r}
+data_cooks_md_select = tibble(id_point = 1:nrow(df_clean),
+                            rstand = std_resid_md_select, hats = hat_values_md_select,
+                            cooks = cooks_D_md_select, diabetes_012 = df_clean$diabetes_012)
+data_cooks_md_select |> arrange(desc(cooks))
+```
+
+**Nhận xét:** Vì các `Cook's Distance` của từng điểm dữ liệu trên đều nhỏ hơn 0.5 nên không có giá trị ngoại lai nào cần loại bỏ.
+
+## 8.4 Mở rộng mô hình
+
+Vì không thể kiểm tra tính tuyến tính cho các biến định tính trong mô hình được lựa chọn ở trên nên ta sử dụng mô hình *Cộng tính tổng quát* (Generalize Additive Moldels) hay còn gọi là GAM.
+
+```{r}
+md_select_gam = gam(diabetes_012 ~ high_bp +
+                    high_chol +
+                    chol_check +
+                    s(bmi) +
+                    stroke +
+                    hvy_alcohol_consump +
+                    gen_hlth +
+                    age +
+                    income +
+                    sex +
+                    diff_walk +
+                    heart_diseaseor_attack, data = df_clean, family = binomial)
+```
+
+Kết quả tổng hợp:
+
+```{r}
+summary(md_select_gam)
+```
+
+Một số nhận xét:
+
+- Hệ số dương của biến `high_bpHigh Blood` cho thấy những người bị huyết áp cao có khả năng mắc bệnh tiểu đường cao hơn so với những người không bị huyết áp cao. Việc tăng một đơn vị của biến `high_bp` sẽ làm tăng tỷ lệ mắc bệnh tiểu đường lên $exp(0.61189) \approx 1.843$ lần.
+
+- Hệ số dương của biến `high_cholHigh Cholesterol` cho thấy những người bị cholesterol cao có khả năng mắc bệnh tiểu đường cao hơn so với những người không bị cholesterol cao.
+
+- Hệ số âm của biến `hvy_alcohol_consumpYes` cho thấy rằng người tiêu thụ rượu nặng có nguy cơ mắc bệnh tiểu đường thấp hơn so với người không tiêu thụ rượu nặng. Tuy nhiên, đây không phải là kết luận chắc chắn, vì tiêu thụ rượu nặng quá mức cũng có thể gây ảnh hưởng tiêu cực đến sức khỏe tổng thể.
+
+- Hệ số dương của các mức biến `gen_hlth` (`Very Good`, `Good`, `Fair`, `Poor`) cho thấy rằng nguy cơ mắc bệnh tiểu đường tăng dần theo sự giảm sút của sức khỏe. Những người có sức khỏe "Fair" hoặc "Poor" có nguy cơ mắc bệnh tiểu đường cao hơn so với những người có sức khỏe "Excellent".
+
+- Với hệ số âm của các mức biến `income` (từ `income2` đến `income8`), ta nhận thấy rằng người có thu nhập càng cao thì nguy cơ mắc bệnh tiểu đường càng thấp. Điều này có thể do khả năng tiếp cận dịch vụ y tế tốt hơn hoặc duy trì lối sống lành mạnh hơn.
+
+- Hệ số dương của các mức biến `age` (từ `age2` đến `age13`) cho thấy rằng nguy cơ mắc bệnh tiểu đường tăng dần theo độ tuổi. Cụ thể, người ở nhóm tuổi cao nhất (`age13`) có nguy cơ mắc bệnh tiểu đường cao hơn đáng kể so với nhóm tuổi trẻ nhất.
+
+- Hệ số dương của biến `sexMale` cho thấy rằng nam giới có nguy cơ mắc bệnh tiểu đường cao hơn so với nữ giới. Cụ thể, việc tăng một đơn vị của biến này sẽ làm tăng tỷ lệ mắc bệnh tiểu đường lên $exp(0.22666) \approx 1.254$ lần.
+
+- Hệ số dương của biến `diff_walkYes` chỉ ra rằng người gặp khó khăn khi leo cầu thang có nguy cơ mắc bệnh tiểu đường cao hơn người không gặp khó khăn.
+
+- Hệ số dương của biến `heart_diseaseor_attackYes` cho thấy rằng người từng mắc bệnh tim hoặc đau tim có nguy cơ mắc bệnh tiểu đường cao hơn. Cụ thể, việc tăng một đơn vị của biến này sẽ làm tăng tỷ lệ mắc bệnh tiểu đường lên $exp(0.21459) \approx 1.239$ lần.
+
+Ta sẽ sử dụng mô hình này để phân loại dữ liệu về 5 người ở bước **Lựa chọn mô hình** phía trên thành hai nhóm là: `Không mắc bệnh tiểu đường` và `Mắc bệnh tiểu đường` bằng cách so sánh xác suất ở ngưỡng $c = 0.5$.
+
+```{r}
+predict_prob = predict(md_select_gam, newdata = new_data_1, type = "response")
+ifelse(predict_prob > 0.5, "Diabetes", "No Diabetes")
+```
+
+1. Xác định thặng dư từng phần
+
+```{r, cache=TRUE}
+terms_md_select_gam = predict(md_select_gam, type = "terms")
+```
+
+```{r, cache=TRUE}
+partial_resid_md_select_gam = residuals(md_select_gam, type = "working") +
+  terms_md_select_gam
+```
+
+2. Tạo bảng dữ liệu có thông tin cần thiết
+
+```{r, cache=TRUE}
+terms_md_select_gam = predict(md_select_gam, type = "terms")
+partial_resid_md_select_gam = residuals(md_select_gam, type = "working") +
+  terms_md_select_gam
+
+data_part_resid_bmi_gam = tibble(
+  bmi = df_clean$bmi,
+  terms_bmi_gam = terms_md_select_gam[, "s(bmi)"],
+  partial_resid_bmi = partial_resid_md_select_gam[, "s(bmi)"]
+)
+```
+
+3. Vẽ biểu đồ để kiểm tra tính tuyến tính của `bmi` và biến phụ thuộc
+
+```{r, cache=TRUE}
+ggplot(data_part_resid_bmi_gam, aes(x = bmi, y = partial_resid_bmi)) +
+  geom_point() +
+  geom_smooth(method = "loess",
+              se = FALSE,
+              color =  "forestgreen",
+              linetype = "dashed") +
+  geom_line(aes(x = bmi, y = terms_bmi_gam), color = "blue") +
+  labs(x = "BMI", y = "Partial Residuals") +
+  theme_minimal()
+```
+
+**Nhận xét:** Đường thẳng tuyến tính (màu xanh dương) trùng với đường thẳng xu hướng của dữ liệu (màu xanh lá cây).
+
+$\Rightarrow$ Giả định về tính tuyến tính của `bmi` là phù hợp.
+
+# 9. Đánh giá mô hình
+
+## 9.1 Chia dữ liệu thành 2 tập huấn luyện và kiểm tra
+
+- Tập huấn luyện **(train)**: 70% dữ liệu
+
+- Tập kiểm tra **(test)**: 30% dữ liệu
+
+```{r}
+set.seed(123)
+n = nrow(df_clean)
+train.index = sample(1:n, 0.7 * n, replace = FALSE)
+train_df = df_clean[train.index, ]
+test_df = df_clean[-train.index, ]
+```
+
+## 9.2 Hàm tính các giá trị đánh giá mô hình
+
+```{r}
+evaluate_model = function(x)
+{
+    cc = sum(diag(x))
+    sc = sum(x)
+    pp = colSums(x)
+    tt = rowSums(x)
+
+    prec = diag(x) / pp
+    recall = diag(x) / tt
+    macro_prec = mean(prec)
+    macro_recall = mean(recall)
+    macro_f1 = 2 * macro_prec * macro_recall / (1 / macro_prec + 1 / macro_recall)
+    acc = cc/sc
+
+    kap = (as.numeric(cc) * as.numeric(sc) - sum(tt * pp)) / (as.numeric(sc) ^ 2 - sum(tt * pp))
+
+    return(list(Accuaracy = acc,
+                Precision = prec,
+                Recall = recall,
+                Macro_F1 = macro_f1,
+                Kappa = kap))
+}
+```
+
+## 9.3 Xử lý dữ liệu mất cân bằng
+
+Ta thực hiện xử lý mất cân bằng dữ liệu trên tập huấn luyện.
+
+```{r}
+table(train_df$diabetes_012)
+```
+
+- **Under-sampling**
+
+```{r}
+set.seed(123)
+
+under_sampling = function(data, class)
+{
+    new_data = data
+    class_fact = as.factor(data[[class]])
+    data_split = split(data, class_fact)
+    n_class = sapply(data_split, FUN = nrow)
+    min_class = min(n_class)
+    max_class = max(n_class)
+
+    id_max_class = which.max(n_class)
+    id_min_class = which.min(n_class)
+
+    id_max = sample(1:max_class, size = min_class, replace =  FALSE)
+    new_data_max = data_split[[id_max_class]][id_max, ]
+    new_data = rbind(data_split[[id_min_class]], new_data_max)
+    return (new_data)
+}
+
+train_df_under = under_sampling(train_df, "diabetes_012")
+
+table(train_df_under$diabetes_012)
+```
+
+- **SMOTE**
+
+```{r}
+library(themis)
+set.seed(123)
+train_df_smote = smotenc(df = train_df,
+                            var = "diabetes_012",
+                            k = 5,
+                            over_ratio = 1)
+```
+
+```{r}
+table(train_df_smote$diabetes_012)
+```
+
+## 9.4 Đánh giá mô hình
+
+### 9.4.1 Xây dựng mô hình với tập huấn luyện
+
+Xây dựng mô hình với tập huấn luyện sau khi thực hiện 2 phương pháp *Under-sampling* và *SMOTE*.
+
+- **Under-sampling**
+
+```{r}
+logit_2_under = glm(diabetes_012 ~ high_bp +
+                    high_chol +
+                    chol_check +
+                    bmi +
+                    stroke +
+                    hvy_alcohol_consump +
+                    gen_hlth +
+                    age +
+                    income +
+                    sex +
+                    diff_walk +
+                    heart_diseaseor_attack,
+              data = train_df_under, family = "binomial")
+summary(logit_2_under)
+```
+
+- **SMOTE**
+
+```{r}
+logit_2_smote = glm(diabetes_012 ~ high_bp +
+                    high_chol +
+                    chol_check +
+                    bmi +
+                    stroke +
+                    hvy_alcohol_consump +
+                    gen_hlth +
+                    age +
+                    income +
+                    sex +
+                    diff_walk +
+                    heart_diseaseor_attack,
+              data = train_df_smote, family = "binomial")
+summary(logit_2_smote)
+```
+
+### 9.4.2 Dự đoán trên tập kiểm tra
+
+- **Under-sampling**
+
+```{r}
+logit_2_under_pred = predict(logit_2_under, test_df, type = "response")
+
+logit_2_under_pred_class = factor(
+  ifelse(logit_2_under_pred < 0.5, "No diabetes", "Diabetes"),
+  levels = c("No diabetes", "Diabetes")
+)
+
+conf_matrix_logit_2_under = table(test_df$diabetes_012, logit_2_under_pred_class)
+
+print(conf_matrix_logit_2_under)
+```
+
+Kết quả của các chỉ số:
+
+```{r}
+evaluate_model(conf_matrix_logit_2_under)
+```
+
+Như vậy, ta có được các nhận định sau:
+
+1. **Accuracy**: 71.4\%
+
+- Mặc dù đây là một chỉ số phổ biến, nhưng khi dữ liệu đã được cân bằng, độ chính xác không còn là tiêu chí đáng tin cậy để đánh giá mô hình.
+
+- Mức 71.4\% cho thấy mô hình đạt độ chính xác khá ổn, nhưng cần kết hợp với Precision, Recall, và F1-Score để đánh giá toàn diện.
+
+2. **Precision**
+
+- `No diabetes`: 93.25\%
+
+$\Rightarrow$ Mô hình dự đoán lớp `No diabetes` khá chính xác. Trong số các mẫu được dự đoán là `No diabetes` có đến 93.25\% là đúng.
+
+- `Diabetes`: 34.81\%
+
+$\Rightarrow$ Với lớp `Diabetes` Precision thấp cho thấy mô hình có nhiều dự đoán sai dương tính **(false positives)** tức là nhiều mẫu bị dự đoán nhầm thành `Diabetes`.
+
+3. **Recall (Sensitivity)**
+
+- `No diabetes`: 70.6\%
+
+$\Rightarrow$ Mô hình nhận diện được phần lớn các mẫu thuộc lớp `No diabetes` nhưng vẫn bỏ sót khoảng 29.4\% (**False Negative**).
+
+- `Diabetes`: 75.44\%
+
+$\Rightarrow$ Mô hình nhận diện tốt hơn các mẫu thuộc lớp `Diabetes` với tỷ lệ bỏ sót là 24.56\%
+
+4. **Macro F1-Score**: 31.90\%
+
+- Giá trị thấp (31.9\%) cho thấy hiệu suất của mô hình với lớp `Diabetes` chưa đạt được kỳ vọng.
+
+5. **Kappa**: 31.49\%
+
+Hệ số Kappa thấp phản ánh rằng mô hình chỉ hiệu quả hơn một chút so với việc đoán ngẫu nhiên.
+
+- **SMOTE**
+
+```{r}
+logit_2_smote_pred = predict(logit_2_smote, test_df, type = "response")
+logit_2_smote_pred_class = ifelse(logit_2_smote_pred >= 0.5, "Diabetes", "No diabetes")
+logit_2_smote_pred_class = factor(logit_2_smote_pred_class, levels = c("No diabetes", "Diabetes"))
+
+conf_matrix_logit_2_smote = table(test_df$diabetes_012, logit_2_smote_pred_class)
+
+print(conf_matrix_logit_2_smote)
+```
+
+Kết quả của các chỉ số
+
+```{r}
+evaluate_model(conf_matrix_logit_2_smote)
+```
+
+1. **Accuracy**: 71.14\%
+
+Mức độ chính xác tổng thể của mô hình, nhưng không phản ánh toàn diện hiệu suất trong bài toán mất cân bằng.
+
+2. **Precision**:
+
+  - `No diabetes`: 93.14$\%$ (dự đoán rất chính xác).
+  
+  - `Diabetes`: 34.49$\%$ (dự đoán còn nhiều nhầm lẫn).
+
+3. **Recall**:
+
+  - `No diabetes`: 70.30$\%$ (phát hiện được phần lớn các trường hợp "No diabetes").
+  
+  - `Diabetes`: 75.12$\%$ (ít bỏ sót các trường hợp mắc bệnh).
+
+4. **Macro F1-Score**: 31.54\%
+
+Hiệu suất tổng thể của mô hình còn thấp.
+
+5. **Kappa**: 30.98\%
+
+Dự đoán của mô hình chỉ tốt hơn ngẫu nhiên một chút, mặc dù đã áp dụng cân bằng dữ liệu bằng SMOTE.
+
+### 9.4.3 Đánh giá dựa trên ROC và AUC
+
+- **Under-sampling**
+
+```{r, cache=TRUE}
+prob_pred_dt_2_under = predict(logit_2_under, type = "response", newdata = test_df)
+out_roc_2_under = roc(test_df$diabetes_012 ~ prob_pred_dt_2_under)
+out_roc_2_under$auc
+```
+
+- Giá trị AUC đạt 80.58\% cho thấy mô hình Logistic Regression sau khi áp dụng under-sampling có khả năng phân biệt khá tốt giữa hai nhóm `Diabetes` và `No diabetes`.
+
+- AUC nằm trong khoảng từ 0.8 đến 0.9, được xem là tốt. Điều này phản ánh rằng mô hình có khả năng phân loại tốt trong việc dự đoán xác suất mắc bệnh.
+
+```{r, cache=TRUE}
+plot(out_roc_2_under, legacy.axes = TRUE, asp = 0, print.auc = TRUE)
+```
+
+Biểu đồ trên cho ta thấy rằng:
+
+1. Một AUC cao như 0.8058 cho thấy mô hình có thể cân bằng tốt giữa ***Sensitivity*** và ***Specificity*** ở một số ngưỡng tối ưu.
+
+2. Với AUC = 0.8058, mô hình có khả năng dự đoán tốt hơn ngẫu nhiên (AUC = 0.5) một cách đáng kể.
+
+- **SMOTE**
+
+```{r, cache=TRUE}
+prob_pred_dt_2_smote = predict(logit_2_smote, type = "response", newdata = test_df)
+out_roc_2_smote = roc(test_df$diabetes_012 ~ prob_pred_dt_2_smote)
+out_roc_2_smote$auc
+```
+
+- Giá trị AUC đạt 80.03\% cho thấy mô hình Logistic Regression sau khi áp dụng SMOTE có khả năng phân biệt khá tốt giữa hai nhóm `Diabetes` và `No diabetes`.
+
+- AUC nằm trong khoảng từ 0.8 đến 0.9, được xem là tốt. Điều này phản ánh rằng mô hình có khả năng phân loại tốt trong việc dự đoán xác suất mắc bệnh.
+
+```{r, cache=TRUE}
+plot(out_roc_2_smote, legacy.axes = TRUE, asp = 0, print.auc = TRUE)
+```
+
+Qua biểu đồ ta thấy được:
+
+1. Một AUC cao như 0.8003 cho thấy mô hình có thể cân bằng tốt giữa ***Sensitivity*** và ***Specificity*** ở một số ngưỡng tối ưu.
+
+2. Với AUC = 0.8003, mô hình có khả năng dự đoán tốt hơn ngẫu nhiên (AUC = 0.5) một cách đáng kể.
+
+# 10. Kết luận
+
+Dựa trên phân tích và kết quả, một số kết luận quan trọng có thể rút ra như sau:
+
+1. **Hiệu suất mô hình**:  
+
+   - Trong bài toán dự đoán bệnh tiểu đường, mô hình Logistic Regression kết hợp kỹ thuật cân bằng dữ liệu SMOTE và mô hình Logistic Regression sử dụng kỹ thuật Under-sampling đều đạt hiệu suất dự đoán tương đương.
+
+2. **Các yếu tố làm tăng nguy cơ tiểu đường**:  
+
+   - Nguy cơ mắc bệnh tiểu đường gia tăng cùng với các yếu tố như huyết áp cao, cholesterol cao, tuổi tác và chỉ số BMI cao.
+
+3. **Các yếu tố giảm nguy cơ tiểu đường**:  
+
+   - Những người có thu nhập cao hơn thường có nguy cơ mắc bệnh tiểu đường thấp hơn nhờ điều kiện tiếp cận dịch vụ y tế và chế độ dinh dưỡng tốt hơn.  
+   
+   - Sức khỏe tổng thể, thể chất và tinh thần tốt cũng là yếu tố quan trọng giúp giảm nguy cơ mắc bệnh.
+
+4. **Giải pháp giảm nguy cơ tiểu đường**:  
+
+   - Duy trì cân nặng ổn định, kiểm soát huyết áp và cholesterol.  
+   
+   - Tăng cường vận động thể chất và giữ tinh thần thoải mái.  
+   
+   - Hạn chế tiêu thụ thức ăn nhanh, thực phẩm chứa nhiều đường, chất béo và natri.  
+   
+   - Kiểm tra sức khỏe định kỳ và nâng cao kiến thức về bệnh tiểu đường để nhận thức được các nguy cơ và cách phòng ngừa.
+
